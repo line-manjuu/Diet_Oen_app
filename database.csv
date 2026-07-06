@@ -1,0 +1,7 @@
+type,key,value
+setting,start_weight,67.0
+setting,goal,60.0
+setting,deadline,2026-08-25
+setting,start_date,2026-06-30
+log,2026-06-30,66.0
+log,2026-07-08,66.0

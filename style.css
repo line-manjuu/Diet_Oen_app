@@ -1,0 +1,88 @@
+/* =========================================================
+   ダイエット応援アプリ v3 の「見た目（CSS）」ファイル。
+   風船・結果メッセージのデザインをここで決めています。
+   （風船の演出は v2／app_answer2.py のものを流用しています）
+
+   ★デザイン調整は自由にどうぞ！「どこを変えると何が変わるか」早見表★
+     ・風船の色    → app.py の colors = [ ... ] を変える（"#ff5a5f" など）
+     ・風船の数    → app.py の show_result 内 range(個数) の「個数」を変える
+     ・風船の大きさ → 下の .balloon の width / height
+     ・風船の丸み   → .balloon の border-radius（50% で卵形、10% で四角っぽく）
+     ・飛ぶ高さ・傾き → @keyframes floatUp の 100% の translateY / rotate
+     ・ヒモの濃さ・長さ → .balloon::after の background / height
+     ・メッセージの文字サイズ → .result-msg の font-size
+     ・メッセージの背景・位置 → .result-msg の background / top
+     ・メッセージが消えるまでの時間 → .result-msg の animation の「4.5s」
+   ※ ここを書きかえて保存 → ブラウザの「Rerun」で見た目が変わります。
+   ========================================================= */
+
+/* 風船をまとめて画面に重ねる、透明の入れもの（下の操作はじゃましない）。 */
+.celebrate {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+/* ▼ 風船1個の見た目。色は app.py 側で1個ずつ指定しています。 */
+.balloon {
+  position: absolute;
+  bottom: -120px;          /* 最初は画面の下（外）に隠しておく位置 */
+  width: 42px;             /* ★風船の横幅（大きくすると太い風船） */
+  height: 54px;            /* ★風船の高さ（width より少し大きいと卵形） */
+  border-radius: 50%;      /* ★丸み。50%=まんまる〜卵形、10%=四角っぽく */
+  opacity: 0.9;            /* ★濃さ。1=くっきり、0.5=うすい */
+  animation-name: floatUp;
+  animation-timing-function: ease-in;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+/* ▼ 風船の下に伸びる細いヒモ。 */
+.balloon::after {
+  content: "";
+  position: absolute;
+  top: 54px;               /* 風船の真下から始める（風船の高さに合わせる） */
+  left: 20px;
+  width: 2px;              /* ★ヒモの太さ */
+  height: 40px;            /* ★ヒモの長さ */
+  background: rgba(0, 0, 0, 0.25);  /* ★ヒモの色・濃さ（最後の0.25が濃さ） */
+}
+
+/* ▼ 風船が「下→上」へ動くアニメ。100% の値を変えると飛び方が変わる。 */
+@keyframes floatUp {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+  80%  { opacity: 0.9; }
+  100% { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+  /* ★translateY(-110vh) … マイナスを大きくするほど高く飛ぶ
+     ★rotate(20deg)      … 上りきったときの傾き（0deg でまっすぐ） */
+}
+
+/* ▼ 画面の前面に出る結果メッセージ。数秒で自動的に消えます。
+   文字色は app.py 側で style="color:..." を差し込むので、ここでは指定しません。 */
+.result-msg {
+  position: fixed;
+  top: 18%;                /* ★位置（高さ）。小さいほど上、大きいほど下 */
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.95);  /* ★メッセージの背景色 */
+  font-size: 2rem;         /* ★文字の大きさ */
+  font-weight: bold;
+  padding: 20px 34px;      /* ★文字まわりの余白 */
+  border-radius: 18px;     /* ★枠の角の丸み */
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);  /* 影 */
+  text-align: center;
+  max-width: 86vw;
+  animation: popFade 4.5s ease forwards;  /* ★「4.5s」を大きくすると長く表示される */
+}
+
+/* ▼ メッセージが「ポンッと出て、しばらく見えて、消える」アニメ。 */
+@keyframes popFade {
+  0%   { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  12%  { opacity: 1; transform: translateX(-50%) scale(1); }
+  82%  { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1); }
+}
